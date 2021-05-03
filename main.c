@@ -72,25 +72,22 @@ void getCmd();
 int main(void) {
 
   char* cmd[MAXARGS]; // Holds entire command
-  char* inputFile;    // Holds name of input
-  char* outputFile;   // Holds name of output
+  char inputFile[256] = "";    // Holds name of input
+  char outputFile[256] = "";   // Holds name of output
   int*  isBackground; // Holds if background run
 
   getCmd(cmd, inputFile, outputFile, &isBackground);
 
-  // if(inputFile)
-  //   printf("inputFile: %s", inputFile);
-  // if(outputFile)
-  // printf("outputFile: %s", outputFile);
-  // printf("isBackground: %d", *isBackground);
+  printf("inputFile: %s\n", inputFile);
+  printf("outputFile: %s\n", outputFile);
 
   return 0;
 }
 
 // command [arg1 arg2 ...] [< input_file] [> output_file] [&]
 void getCmd(char* cmdArgv[],
-            char* inputFile, 
-            char* outputFile, 
+            char inputFile[], 
+            char outputFile[], 
             int* isBackground) {
 
   *isBackground = 0;
@@ -130,9 +127,8 @@ void getCmd(char* cmdArgv[],
       *isBackground = 1;
     }
     // input_file
-    else if(!strcmp(token, "<")) {
+    else if(!strcmp("<", token)) {
       // Advance one word
-      printf("found an input");
       token = strtok(NULL, space);
       
       strcpy(inputFile, token);
@@ -140,7 +136,6 @@ void getCmd(char* cmdArgv[],
     // output_file
     else if(!strncmp(token, ">", strlen("&"))) {
       // Advance one word
-      printf("found an output");
       token = strtok(NULL, space);
       
       strcpy(outputFile, token);
@@ -149,7 +144,7 @@ void getCmd(char* cmdArgv[],
     else {
       cmdArgv[i] = strdup(token);
 
-      // Finish token extraction.
+      // !!! Finish token extraction.
       // for(int j = 0; j < strlen(cmdArgv[i]); j++) {
       //   if((cmdArgv[i][j] == '$') && (cmdArgv[i][j+1] == '$')) {
       //     char* first;
@@ -159,8 +154,6 @@ void getCmd(char* cmdArgv[],
       //   }
       // }
     }
-
-    printf("%s", token);
 
     // Lastly, iterate
     token = strtok(NULL, space);
