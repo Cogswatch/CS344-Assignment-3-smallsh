@@ -74,12 +74,37 @@ int main(void) {
   char* cmd[MAXARGS]; // Holds entire command
   char inputFile[256] = "";    // Holds name of input
   char outputFile[256] = "";   // Holds name of output
-  int*  isBackground; // Holds if background run
+  int  isBackground; // Holds if background run
 
-  getCmd(cmd, inputFile, outputFile, &isBackground);
+  int prevStatus = 0;
+  int running = 1;
 
-  printf("inputFile: %s\n", inputFile);
-  printf("outputFile: %s\n", outputFile);
+  while(running) {
+    getCmd(cmd, inputFile, outputFile, &isBackground);
+
+    if(cmd[0][0] == '\0')
+      continue;
+
+    else if(cmd[0][0] == '#')
+      continue;
+
+    else if((strcmp(cmd[0], "exit\n") == 0) || (strcmp(cmd[0], "exit\n") == 0))
+      running = 0;
+
+    else if(!strcmp(cmd[0], "cd\n") ) {
+      chdir(getenv("HOME"));
+    }
+    else if(!strcmp(cmd[0], "cd") ) {
+      int x = chdir(cmd[1]);
+      if (x == -1) {
+					printf("Directory not found.\n");
+					fflush(stdout);
+			}
+    }
+    else if(!strcmp(cmd[0], "status"))
+      printf("Running status\n");
+
+  }
 
   return 0;
 }
@@ -100,7 +125,7 @@ void getCmd(char* cmdArgv[],
   fgets(cmdTxt, MAXLENGTH, stdin);
 
   int match = 0;
-  for(int i = 0; (i < MAXLENGTH) && (match == 0); i++) {
+  for(int i = 0; (!match) && (i < MAXLENGTH); i++) {
     if(cmdTxt[i] == '\n')
       cmdTxt[i] = '\0';
       match = 1;
@@ -161,3 +186,4 @@ void getCmd(char* cmdArgv[],
 
   return;
 }
+
